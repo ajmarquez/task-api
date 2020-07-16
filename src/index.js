@@ -46,6 +46,8 @@ app.post('/users', (req, res) => {
 
 
 // Tasks Endpoints
+
+//POST
 app.post('/tasks', (req, res) => {
     const task = new Task(req.body)
 
@@ -57,6 +59,28 @@ app.post('/tasks', (req, res) => {
 
 })
 
+//GET
+app.get('/tasks', (req, res) => {
+    Task.find({}).then((tasks) => {
+        res.send(tasks)
+    }).catch((e) => {
+        res.status(500).send()
+    })
+})
+
+app.get('/tasks/:id', (req,res) => {
+    const _id = req.params.id
+
+    Task.findById(_id).then((task) => {
+        if (!task) {
+            return res.status(404).send()
+        }
+
+        res.send(task)
+    }).catch((e => {
+        res.status(500).send()
+    }))
+})
 
 
 app.listen(port, () => {
