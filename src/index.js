@@ -10,7 +10,7 @@ app.use(express.json())
 
 // Users Endpoints
 
-//GET
+//READ
 app.get('/users', async (req, res) => {
 
     try {
@@ -36,7 +36,7 @@ app.get('/users/:id', async (req, res) => {
     }
 })
 
-//POST
+//CREATE
 app.post('/users', async (req, res) => {
     const user = new User(req.body)
 
@@ -72,9 +72,22 @@ app.post('/users/:id', async (req, res) => {
 })
 
 
+app.delete('/users/:id', async (req, res) => {
+    try {
+        const user =  await User.findByIdAndDelete(req.params.id)
+        if (!user) {
+            res.status(404).send()
+        }
+        res.send(user)
+    } catch (e) {
+        res.status(500).send()
+    }
+})
+
+
 // Tasks Endpoints
 
-//POST
+//CREATE
 app.post('/tasks', async (req, res) => {
     const task = new Task(req.body)
 
@@ -86,7 +99,7 @@ app.post('/tasks', async (req, res) => {
     }
 })
 
-//GET
+//READ
 app.get('/tasks', async (req, res) => {
 
     try {
@@ -130,6 +143,19 @@ app.post('/tasks/:id', async (req,res) => {
         res.send(task)
     } catch (e) {
         res.status(400).send()
+    }
+})
+
+app.delete('/tasks/:id', async (req,res) => {
+    try{
+        const task = await Task.findByIdAndRemove(req.params.id)
+        if (!task) {
+            res.status(404).send()
+        }
+        res.send(task)
+
+    } catch (e) {
+        res.status(500).send()
     }
 })
 
