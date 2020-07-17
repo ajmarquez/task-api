@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -40,7 +41,13 @@ const userSchema = new mongoose.Schema({
                 throw new Error('Passwords must be longer than 6 character and must not include the word \'password\'')
             }
         }
-    }
+    },
+    tokens: [{
+        token: {
+            type: String,
+            required: true
+        }
+    }]
 })
 
 //Hash the plain text password before saving
@@ -53,6 +60,16 @@ userSchema.pre('save', async function (next) {
 
     next()
 })
+
+userSchema.methods.generateAuthToken = async function () {
+    const user = this
+    const token = jwt.sign({ _id: user._id.toString() }, 'CthulhuRules')
+
+    user.tokens = user.tokens.concat({ token })
+    await user.save()
+    
+    return token
+}
 
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email })
