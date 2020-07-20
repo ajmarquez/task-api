@@ -71,6 +71,17 @@ userSchema.methods.generateAuthToken = async function () {
     return token
 }
 
+//when adding the .toJSON we are applying a function to the schema before it gets Stringified. 
+userSchema.methods.toJSON = function () {
+    const user = this
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.tokens
+
+    return userObject
+}
+
 userSchema.statics.findByCredentials = async (email, password) => {
     const user = await User.findOne({ email })
 
