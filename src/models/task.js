@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { ObjectID } = require('mongodb')
 
 
 const Task = mongoose.model('Task', {
@@ -15,6 +16,11 @@ const Task = mongoose.model('Task', {
     completed: {
         type: Boolean,
         default: false
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        require: true,
+        ref: 'User'
     }
 })
 
